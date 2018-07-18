@@ -54,10 +54,10 @@ class scanner(threading.Thread):
                 if args.tld and res:
                     nameservers = sorted(list(res))
                     ns0 = str(nameservers[0])[:-1]  # First nameserver
-                    print(domain + " - " + col.brown + ns0 + col.end)
+                    # print(domain + " - " + col.brown + ns0 + col.end)
                 if args.tld:
                     if res:
-                        print(domain + " - " + res)
+                        print("")
                     return
                 for rdata in res:
                     address = rdata.address
@@ -67,12 +67,12 @@ class scanner(threading.Thread):
                     if args.domain_first:
                         print(domain + " - " + col.brown + address + col.end)
                     else:
-                        print(address + " - " + col.brown + domain + col.end)
+                        print(col.brown + domain + col.end)
                     if outfile:
                         if args.domain_first:
                             print(domain + " - " + address, file=outfile)
                         else:
-                            print(address + " - " + domain, file=outfile)
+                            print(domain, file=outfile)
                     try:
                         addresses.add(ipaddr(unicode(address)))
                     except NameError:
@@ -200,7 +200,7 @@ def get_mx(target):
     # Return if we don't get any MX records back
     if not res:
         return
-    out.good("MX records found, added to target list")
+    # out.good("MX records found, added to target list")
     for mx in res:
         print(mx.to_text())
         if outfile:
@@ -239,7 +239,7 @@ def add_tlds(domain):
 
 def get_args():
     global args
-    
+
     parser = argparse.ArgumentParser('dnscan.py', formatter_class=lambda prog:argparse.HelpFormatter(prog,max_help_position=40))
     target = parser.add_mutually_exclusive_group(required=True) # Allow a user to specify a list of target domains
     target.add_argument('-d', '--domain', help='Target domain', dest='domain', required=False)
@@ -322,7 +322,7 @@ if __name__ == "__main__":
     for subtarget in targets:
         global target
         target = subtarget
-        out.status("Processing domain {}".format(target))
+        # out.status("Processing domain {}".format(target))
         if args.tld:
             if "." in target:
                 out.warn("Warning: TLD scanning works best with just the domain root")
@@ -332,7 +332,7 @@ if __name__ == "__main__":
             queue.put(target)   # Add actual domain as well as subdomains
 
             nameservers = get_nameservers(target)
-            out.good("Getting nameservers")
+            # out.good("Getting nameservers")
             targetns = []       # NS servers for target
             try:    # Subdomains often don't have NS recoards..
                 for ns in nameservers:
@@ -340,30 +340,27 @@ if __name__ == "__main__":
                     res = lookup(ns, "A")
                     for rdata in res:
                         targetns.append(rdata.address)
-                        print(rdata.address + " - " + col.brown + ns + col.end)
+                        print("")
                         if outfile:
-                            print(rdata.address + " - " + ns, file=outfile)
+                            print("")
                     zone_transfer(target, ns)
             except SystemExit:
                 sys.exit(0)
             except:
-                out.warn("Getting nameservers failed")
-    #    resolver.nameservers = targetns     # Use target's NS servers for lokups
-    # Missing results using domain's NS - removed for now
-            out.warn("Zone transfer failed\n")
+                out.status("")
             if args.zonetransfer:
                 sys.exit(0)
 
             get_v6(target)
             get_txt(target)
-            get_mx(target)
+            # get_mx(target)
             wildcard = get_wildcard(target)
             if wildcard:
                 try:
                     addresses.add(ipaddr(unicode(wildcard)))
                 except NameError:
                     addresses.add(ipaddr(str(wildcard)))
-            out.status("Scanning " + target + " for " + recordtype + " records")
+            # out.status("Scanning " + target + " for " + recordtype + " records")
             add_target(target)
 
         for i in range(args.threads):
