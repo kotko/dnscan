@@ -351,8 +351,8 @@ if __name__ == "__main__":
             if args.zonetransfer:
                 sys.exit(0)
 
-            get_v6(target)
-            get_txt(target)
+            # get_v6(target)
+            # get_txt(target)
             # get_mx(target)
             wildcard = get_wildcard(target)
             if wildcard:
