@@ -1,0 +1,2 @@
+go.coursera.org
+dgo.coursera.org

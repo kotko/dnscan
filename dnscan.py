@@ -154,8 +154,8 @@ def get_wildcard(target):
         address = res[0].address
         out.good(col.red + "Wildcard" + col.end + " domain found - " + col.brown + address + col.end)
         return address
-    else:
-        out.verbose("No wildcard domain found")
+    # else:
+        # out.verbose("No wildcard domain found")
 
 def get_nameservers(target):
     try:
@@ -214,7 +214,7 @@ def get_mx(target):
     print("")
 
 def zone_transfer(domain, ns):
-    out.verbose("Trying zone transfer against " + str(ns))
+    # out.verbose("Trying zone transfer against " + str(ns))
     try:
         zone = dns.zone.from_xfr(dns.query.xfr(str(ns), domain, relativize=False),
                                  relativize=False)
